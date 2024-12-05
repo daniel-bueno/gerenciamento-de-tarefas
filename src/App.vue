@@ -1,63 +1,83 @@
 <template>
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8">DBO - Gerenciamento de Tarefas</h1>
+    <h1 class="text-3xl font-bold mb-8 text-center text-white-87">DBO - Gerenciamento de Tarefas</h1>
 
-    <div class="space-y-4 max-w-md">
-      <BaseInput
-          id="task-name"
-          v-model="taskName"
-          label="Nome da Tarefa"
-          placeholder="Digite o nome da tarefa"
-          required
+    <div class="space-y-6">
+      <TaskFilter @filter="handleFilter" />
+
+      <TaskForm
+          :available-tasks="tasks"
+          @submit="handleTaskSubmit"
+          @cancel="isFormVisible = false"
       />
 
-      <BaseSelect
-          id="task-status"
-          v-model="taskStatus"
-          label="Status"
-          :options="statusOptions"
-          placeholder="Selecione o status"
-      />
-
-      <div>
-        <i class="block text-sm font-medium text-gray-400 mb-1">Legenda:</i>
-        <div class="flex gap-2">
-          <BaseTag variant="pending">Pendente</BaseTag>
-          <BaseTag variant="in_progress">Em Andamento</BaseTag>
-          <BaseTag variant="completed">Concluído</BaseTag>
-        </div>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <TaskCard
+            v-for="task in filteredTasks"
+            :key="task.id"
+            :task="task"
+            @edit="handleEditTask"
+            @delete="handleDeleteTask"
+        />
       </div>
     </div>
-
-    <BaseButton variant="primary" class="mt-10">
-      {{ (isEditing ? 'Editar' : 'Criar') + ' Tarefa' }}
-    </BaseButton>
   </div>
 </template>
 
 <script>
-import BaseInput from './components/atoms/BaseInput.vue'
-import BaseSelect from './components/atoms/BaseSelect.vue'
-import BaseTag from './components/atoms/BaseTag.vue'
+import { ref, computed } from 'vue'
+import TaskFilter from './components/molecules/TaskFilter.vue'
+import TaskForm from './components/molecules/TaskForm.vue'
+import TaskCard from './components/molecules/TaskCard.vue'
 import BaseButton from './components/atoms/BaseButton.vue'
 
 export default {
   name: 'App',
   components: {
-    BaseInput,
-    BaseSelect,
-    BaseTag,
+    TaskFilter,
+    TaskForm,
+    TaskCard,
     BaseButton
   },
-  data() {
+  setup() {
+    const tasks = ref([])
+    const selectedStatus = ref('')
+    const isFormVisible = ref(true)
+
+    const filteredTasks = computed(() => {
+      if (!selectedStatus.value) return tasks.value
+      return tasks.value.filter(task => task.status === selectedStatus.value)
+    })
+
+    const handleFilter = (status) => {
+      selectedStatus.value = status
+    }
+
+    const handleTaskSubmit = (taskData) => {
+      const newTask = {
+        id: Date.now().toString(),
+        ...taskData
+      }
+      tasks.value.push(newTask)
+      isFormVisible.value = false
+    }
+
+    const handleEditTask = (task) => {
+      // Implementar edição
+    }
+
+    const handleDeleteTask = (task) => {
+      tasks.value = tasks.value.filter(t => t.id !== task.id)
+    }
+
     return {
-      taskName: '',
-      taskStatus: '',
-      statusOptions: [
-        {value: 'pending', label: 'Pendente'},
-        {value: 'in_progress', label: 'Em Andamento'},
-        {value: 'completed', label: 'Concluído'}
-      ]
+      tasks,
+      filteredTasks,
+      isFormVisible,
+      handleFilter,
+      handleTaskSubmit,
+      handleEditTask,
+      handleDeleteTask
     }
   }
 }
