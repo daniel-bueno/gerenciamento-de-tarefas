@@ -20,7 +20,8 @@ export const useTaskStore = defineStore('tasks', {
             return state.tasks.filter(task => task.status === status)
         },
 
-        // Obtém tarefas que podem ser parent (evita ciclos)
+        // Obtém tarefas que podem ser parentes da tarefa especificada
+        // Usada quando era permitido editar a tarefa pai de uma tarefa
         getAvailableParentTasks: (state) => (taskId) => {
             return state.tasks.filter(task => {
                 // Não pode ser a própria tarefa
@@ -75,7 +76,6 @@ export const useTaskStore = defineStore('tasks', {
 
         // Remove uma tarefa
         deleteTask(taskId) {
-            // Verifica se há dependências
             const hasDependencies = this.tasks.some(task => task.parentId === taskId)
             if (hasDependencies) {
                 throw new Error('Não é possível excluir uma tarefa que possui dependências')
@@ -88,16 +88,7 @@ export const useTaskStore = defineStore('tasks', {
             this.selectedTaskId = taskId
         },
 
-        // Inicia o modo de edição de uma tarefa.
-        startEditingTask(task) {
-            this.editingTask = task
-        },
-
-        // Limpa o estado de edição.
-        clearEditingTask() {
-            this.editingTask = null
-        },
-
+        // Abre o modal para criar ou editar uma tarefa
         openModal(task = null) {
             this.editingTask = task
             this.isModalOpen = true
@@ -108,18 +99,5 @@ export const useTaskStore = defineStore('tasks', {
             this.editingTask = null
             this.isModalOpen = false
         },
-
-        // Verifica se é possível adicionar mais um nível de dependência
-        canAddDependency(parentId) {
-            let depth = 0
-            let current = this.tasks.find(t => t.id === parentId)
-
-            while (current?.parentId) {
-                depth++
-                current = this.tasks.find(t => t.id === current.parentId)
-            }
-
-            return depth < 3
-        }
     }
 })

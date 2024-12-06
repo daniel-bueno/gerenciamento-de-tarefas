@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 rounded-lg">
+  <div class="min-h-[90vh] bg-gray-100 rounded-lg">
     <!-- Header -->
     <header class="bg-white shadow rounded-t-lg">
       <div class="container px-4 py-6">
@@ -92,12 +92,16 @@ export default {
     }
 
     const handleTaskSubmit = (taskData) => {
-      if (editingTask.value) {
-        taskStore.updateTask(editingTask.value.id, taskData)
-      } else {
-        taskStore.addTask(taskData)
+      try {
+        if (editingTask.value) {
+          taskStore.updateTask(editingTask.value.id, taskData)
+        } else {
+          taskStore.addTask(taskData)
+        }
+        taskStore.closeModal()
+      } catch (error) {
+        alert(error.message)
       }
-      taskStore.closeModal()
     }
 
     const handleTaskCancel = () => {

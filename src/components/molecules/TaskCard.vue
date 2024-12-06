@@ -25,14 +25,14 @@
       <BaseButton
           variant="default"
           size="sm"
-          @click="handleEdit"
+          @click.prevent.stop="handleEdit"
       >
         Editar
       </BaseButton>
       <BaseButton
           variant="danger"
           size="sm"
-          @click="handleDelete"
+          @click.prevent.stop="handleDelete"
       >
         Excluir
       </BaseButton>
@@ -71,17 +71,13 @@ export default {
     })
 
     const handleEdit = (event) => {
-      event.preventDefault()
       event.stopPropagation()
       taskStore.openModal(props.task)
     }
 
     const handleDelete = (event) => {
-      event.preventDefault()
       event.stopPropagation()
-
-      const shouldDelete = window.confirm('Tem certeza que deseja excluir esta tarefa?')
-      if (shouldDelete) {
+      if (window.confirm('Tem certeza que deseja excluir esta tarefa?')) {
         try {
           taskStore.deleteTask(props.task.id)
         } catch (error) {
