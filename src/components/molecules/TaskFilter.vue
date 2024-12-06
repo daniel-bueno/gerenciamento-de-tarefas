@@ -35,7 +35,7 @@ export default {
     BaseTag
   },
   emits: ['filter'],
-  setup({ emit }) {
+  setup(props, { emit }) {
     const selectedStatus = ref('')
 
     const statusOptions = [

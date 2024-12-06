@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-zinc-700 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+  <div
+      class="bg-zinc-700 rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
+      @click="handleTaskSelect"
+  >
     <div class="flex items-start justify-between">
       <div>
         <h3 class="font-medium text-black-950">{{ task.name }}</h3>
@@ -12,23 +15,23 @@
       </BaseTag>
     </div>
 
-    <div v-if="task.parentId" class="mt-2">
+    <div v-if="task.parentTask" class="mt-2">
       <span class="text-xs text-gray-500">Tarefa Principal:</span>
-      <span class="text-xs font-medium text-gray-700 ml-1">{{ task.parentId }}</span>
+      <span class="text-xs font-medium text-gray-700 ml-1">{{ task.parentTask.name }}</span>
     </div>
 
     <div class="mt-4 flex justify-end gap-2">
       <BaseButton
           variant="default"
           size="sm"
-          @click="$emit('edit', task)"
+          @click.stop="$emit('edit', task)"
       >
         Editar
       </BaseButton>
       <BaseButton
           variant="danger"
           size="sm"
-          @click="handleDelete"
+          @click.stop="handleDelete"
       >
         Excluir
       </BaseButton>
@@ -38,6 +41,7 @@
 
 <script>
 import { computed } from 'vue'
+import { useTaskStore } from '../../store/taskStore.js'
 import BaseTag from '../atoms/BaseTag.vue'
 import BaseButton from '../atoms/BaseButton.vue'
 
@@ -54,7 +58,9 @@ export default {
     }
   },
   emits: ['edit', 'delete'],
-  setup(props, { emit }) {
+  setup(props) {
+    const taskStore = useTaskStore()
+
     const statusLabel = computed(() => {
       const labels = {
         pending: 'Pendente',
@@ -70,9 +76,14 @@ export default {
       }
     }
 
+    const handleTaskSelect = () => {
+      taskStore.selectTask(props.task.id)
+    }
+
     return {
       statusLabel,
-      handleDelete
+      handleDelete,
+      handleTaskSelect
     }
   }
 }
