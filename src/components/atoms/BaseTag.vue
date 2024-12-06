@@ -1,6 +1,6 @@
 <template>
   <span
-      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
       :class="[
       variant === 'pending' ? 'bg-yellow-100 text-yellow-800' :
       variant === 'in_progress' ? 'bg-blue-100 text-blue-800' :

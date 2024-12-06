@@ -1,37 +1,38 @@
 <template>
   <div
-      class="bg-zinc-700 rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
+      class="flex flex-col justify-between bg-zinc-700 rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
       @click="handleTaskSelect"
   >
-    <div class="flex items-start justify-between">
+    <div class="flex flex-col items-start gap-1">
+      <BaseTag :variant="task.status">
+        {{ statusLabel }}
+      </BaseTag>
       <div>
-        <h3 class="font-medium text-black-950">{{ task.name }}</h3>
+        <h3 class="font-medium text-white-87">{{ task.name }}</h3>
         <p v-if="task.description" class="mt-1 text-sm text-gray-500">
           {{ task.description }}
         </p>
       </div>
-      <BaseTag :variant="task.status">
-        {{ statusLabel }}
-      </BaseTag>
     </div>
 
-    <div v-if="task.parentTask" class="mt-2">
-      <span class="text-xs text-gray-500">Tarefa Principal:</span>
-      <span class="text-xs font-medium text-gray-700 ml-1">{{ task.parentTask.name }}</span>
+    <div v-if="parentTask" class="mt-2">
+      <hr class="border-gray-400">
+      <span class="text-xs text-gray-400">Tarefa Principal:</span>
+      <span class="text-xs font-medium text-gray-500 ml-1">{{ parentTask.name }}</span>
     </div>
 
     <div class="mt-4 flex justify-end gap-2">
       <BaseButton
           variant="default"
           size="sm"
-          @click.stop="$emit('edit', task)"
+          @click="$emit('edit', task)"
       >
         Editar
       </BaseButton>
       <BaseButton
           variant="danger"
           size="sm"
-          @click.stop="handleDelete"
+          @click="handleDelete"
       >
         Excluir
       </BaseButton>
@@ -42,6 +43,7 @@
 <script>
 import { computed } from 'vue'
 import { useTaskStore } from '../../store/taskStore.js'
+import { getStatusLabel } from '../../utils/taskUtils.js'
 import BaseTag from '../atoms/BaseTag.vue'
 import BaseButton from '../atoms/BaseButton.vue'
 
@@ -58,20 +60,22 @@ export default {
     }
   },
   emits: ['edit', 'delete'],
-  setup(props) {
+  setup(props, { emit }) {
     const taskStore = useTaskStore()
 
-    const statusLabel = computed(() => {
-      const labels = {
-        pending: 'Pendente',
-        in_progress: 'Em Andamento',
-        completed: 'Concluído'
-      }
-      return labels[props.task.status] || props.task.status
+    const statusLabel = computed(() => getStatusLabel(props.task.status))
+
+    // Pegamos a tarefa pai aqui
+    const parentTask = computed(() => {
+      if (!props.task.parentId) return null
+      return taskStore.getTaskById(props.task.parentId)
     })
 
-    const handleDelete = () => {
-      if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+    const handleDelete = (event) => {
+      event.stopPropagation()
+
+      const shouldDelete = window.confirm('Tem certeza que deseja excluir esta tarefa?')
+      if (shouldDelete) {
         emit('delete', props.task)
       }
     }
@@ -81,6 +85,7 @@ export default {
     }
 
     return {
+      parentTask,
       statusLabel,
       handleDelete,
       handleTaskSelect

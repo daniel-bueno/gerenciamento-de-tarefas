@@ -60,8 +60,11 @@ export const useTaskStore = defineStore('tasks', {
         updateTask(taskId, updates) {
             const index = this.tasks.findIndex(task => task.id === taskId)
             if (index !== -1) {
-                // Se estiver marcando como concluída, verifica dependências
-                if (updates.status === 'completed' && !this.canCompleteTask(taskId)) {
+                const currentTask = this.tasks[index]
+
+                // Se a tarefa já estava concluída, permite alterar os dados
+                // Se houver dependências pendentes e o status não era como concluída, não permite alterar.
+                if (currentTask.status !== 'completed' && updates.status === 'completed' && !this.canCompleteTask(taskId)) {
                     throw new Error('Não é possível concluir esta tarefa pois há dependências pendentes')
                 }
                 this.tasks[index] = { ...this.tasks[index], ...updates }

@@ -1,11 +1,17 @@
 <template>
-  <div class="p-4 bg-dark rounded-lg shadow border-2 border-sky-400" :class="!selectedTask ? 'border-dashed': 'border-solid'">
+  <div
+      class="p-4 bg-dark rounded-lg shadow border-2 border-sky-300"
+      :class="!selectedTask ? 'border-dashed flex items-center justify-center': 'border-solid'"
+  >
     <div v-if="selectedTask" class="task-tree">
       <!-- Nó Principal -->
-      <div class="task-node" :class="{ 'completed': selectedTask.status === 'completed' }">
-        <div class="flex items-center justify-between p-4 border rounded-lg">
+      <div class="task-node">
+        <div
+            class="flex items-center justify-between p-4 border rounded-lg"
+            :class="{ 'completed': selectedTask.status === 'completed' }"
+        >
           <div>
-            <h3 class="font-medium">{{ selectedTask.name }}</h3>
+            <h3 class="font-medium text-white-87">{{ selectedTask.name }}</h3>
             <p v-if="selectedTask.description" class="text-sm text-gray-500">
               {{ selectedTask.description }}
             </p>
@@ -18,10 +24,13 @@
         <!-- Dependências Nível 1 -->
         <div v-if="childTasks.length" class="ml-8 mt-4 space-y-4">
           <div v-for="child in childTasks" :key="child.id" class="dependency-branch">
-            <div class="task-node" :class="{ 'completed': child.status === 'completed' }">
-              <div class="flex items-center justify-between p-4 border rounded-lg">
+            <div class="task-node">
+              <div
+                  class="flex items-center justify-between p-4 border rounded-lg"
+                  :class="{ 'completed': child.status === 'completed' }"
+              >
                 <div>
-                  <h4 class="font-medium">{{ child.name }}</h4>
+                  <h4 class="font-medium text-white-87">{{ child.name }}</h4>
                   <p v-if="child.description" class="text-sm text-gray-500">
                     {{ child.description }}
                   </p>
@@ -38,10 +47,13 @@
                     :key="grandChild.id"
                     class="dependency-branch"
                 >
-                  <div class="task-node" :class="{ 'completed': grandChild.status === 'completed' }">
-                    <div class="flex items-center justify-between p-4 border rounded-lg">
+                  <div class="task-node">
+                    <div
+                        class="flex items-center justify-between p-4 border rounded-lg"
+                        :class="{ 'completed': grandChild.status === 'completed' }"
+                    >
                       <div>
-                        <h5 class="font-medium">{{ grandChild.name }}</h5>
+                        <h5 class="font-medium text-white-87">{{ grandChild.name }}</h5>
                         <p v-if="grandChild.description" class="text-sm text-gray-500">
                           {{ grandChild.description }}
                         </p>
@@ -68,6 +80,7 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTaskStore } from '../../store/taskStore.js'
+import { getStatusLabel } from '../../utils/taskUtils.js'
 import BaseTag from '../atoms/BaseTag.vue'
 
 export default {
@@ -90,15 +103,6 @@ export default {
 
     const getChildTasks = (parentId) => {
       return tasks.value.filter(task => task.parentId === parentId)
-    }
-
-    const getStatusLabel = (status) => {
-      const labels = {
-        pending: 'Pendente',
-        in_progress: 'Em Andamento',
-        completed: 'Concluído'
-      }
-      return labels[status] || status
     }
 
     return {
@@ -140,7 +144,11 @@ export default {
   background-color: #e5e7eb;
 }
 
-.task-node.completed {
-  background-color: #f3f4f6;
+.task-node > .completed {
+  @apply bg-green-100;
+}
+
+.task-node > .completed .text-white-87 {
+  color: #166534 !important;
 }
 </style>

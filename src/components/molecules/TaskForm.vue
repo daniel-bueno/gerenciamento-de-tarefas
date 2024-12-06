@@ -62,8 +62,8 @@ export default {
   },
   props: {
     task: {
-      type: Array,
-      default: () => ([])
+      type: Object,
+      default: () => ({})
     },
     isEditing: {
       type: Boolean,

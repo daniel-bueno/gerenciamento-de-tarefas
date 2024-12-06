@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Seção de Filtros e Ações -->
-    <div class="p-4 flex justify-between items-center bg-zinc-700 rounded-lg">
+    <div class="p-4 flex justify-between items-center gap-4 bg-zinc-700 rounded-lg">
       <BaseButton
           variant="primary"
           class="whitespace-nowrap"
@@ -9,13 +9,13 @@
       >
         Nova Tarefa +
       </BaseButton>
-      <div class="border-2 h-24 border-gray-600 mr-2 ml-4"></div>
+      <div class="border-2 h-28 border-gray-600"></div>
       <TaskFilter @filter="handleFilter" />
     </div>
 
     <!-- Modal de Formulário -->
-    <div v-if="isFormVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div class="bg-white rounded-lg max-w-md w-full mx-4">
+    <div v-if="isFormVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+      <div class="rounded-lg max-w-md w-full mx-4">
         <TaskForm
             :available-tasks="availableParentTasks"
             :task="editingTask"
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Lista de Tarefas -->
-    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-4 md:grid-cols-2">
       <TaskCard
           v-for="task in filteredTasks"
           :key="task.id"
@@ -35,14 +35,34 @@
           @edit="handleEditTask"
           @delete="handleDeleteTask"
       />
+      <div
+          v-if="!tasks.length"
+          class="min-h-36 rounded-lg border-dashed border-2 border-sky-300 flex items-center justify-center"
+      >
+          <p class="p-4 text-center text-gray-500">Crie uma nova tarefa!</p>
+      </div>
+      <div
+          v-if="tasks.length < 2 && filteredTasks.length"
+          class="min-h-36 rounded-lg border-dashed border-2 border-sky-300 flex items-center justify-center"
+      >
+        <p class="p-4 text-center text-gray-500">+</p>
+      </div>
+
+      <div
+          v-if="!filteredTasks.length && tasks.length"
+          class="col-span-2 min-h-36 rounded-lg border-dashed border-2 border-sky-300 flex items-center justify-center"
+      >
+        <p class="p-4 text-center text-gray-500">Nenhuma tarefa {{ selectedStatus ? `com o status ${getStatusLabel(selectedStatus)}` : '' }} encontrada.</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useTaskStore } from '../../store/taskStore.js'
+import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ref, computed, onMounted } from 'vue'
+import { useTaskStore } from '../../store/taskStore.js'
+import { getStatusLabel } from '../../utils/taskUtils.js'
 import TaskFilter from '../molecules/TaskFilter.vue'
 import TaskForm from '../molecules/TaskForm.vue'
 import TaskCard from '../molecules/TaskCard.vue'
@@ -101,9 +121,7 @@ export default {
 
     const handleDeleteTask = (task) => {
       try {
-        if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
-          taskStore.deleteTask(task.id)
-        }
+        taskStore.deleteTask(task.id)
       } catch (error) {
         alert(error.message)
       }
@@ -119,7 +137,9 @@ export default {
       isFormVisible,
       editingTask,
       filteredTasks,
+      selectedStatus,
       availableParentTasks,
+      getStatusLabel,
       handleFilter,
       handleTaskSubmit,
       handleEditTask,
