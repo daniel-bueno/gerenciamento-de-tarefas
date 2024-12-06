@@ -25,7 +25,7 @@
       <BaseButton
           variant="default"
           size="sm"
-          @click="$emit('edit', task)"
+          @click="handleEdit"
       >
         Editar
       </BaseButton>
@@ -59,8 +59,7 @@ export default {
       required: true
     }
   },
-  emits: ['edit', 'delete'],
-  setup(props, { emit }) {
+  setup(props) {
     const taskStore = useTaskStore()
 
     const statusLabel = computed(() => getStatusLabel(props.task.status))
@@ -71,12 +70,23 @@ export default {
       return taskStore.getTaskById(props.task.parentId)
     })
 
+    const handleEdit = (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+      taskStore.openModal(props.task)
+    }
+
     const handleDelete = (event) => {
+      event.preventDefault()
       event.stopPropagation()
 
       const shouldDelete = window.confirm('Tem certeza que deseja excluir esta tarefa?')
       if (shouldDelete) {
-        emit('delete', props.task)
+        try {
+          taskStore.deleteTask(props.task.id)
+        } catch (error) {
+          alert(error.message)
+        }
       }
     }
 
@@ -87,6 +97,7 @@ export default {
     return {
       parentTask,
       statusLabel,
+      handleEdit,
       handleDelete,
       handleTaskSelect
     }

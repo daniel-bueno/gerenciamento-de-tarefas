@@ -3,7 +3,9 @@ import { defineStore } from 'pinia'
 export const useTaskStore = defineStore('tasks', {
     state: () => ({
         tasks: [],
-        selectedTaskId: null
+        selectedTaskId: null,
+        editingTask: null,
+        isModalOpen: false
     }),
 
     getters: {
@@ -84,6 +86,27 @@ export const useTaskStore = defineStore('tasks', {
         // Seleciona uma tarefa para visualização
         selectTask(taskId) {
             this.selectedTaskId = taskId
+        },
+
+        // Inicia o modo de edição de uma tarefa.
+        startEditingTask(task) {
+            this.editingTask = task
+        },
+
+        // Limpa o estado de edição.
+        clearEditingTask() {
+            this.editingTask = null
+        },
+
+        openModal(task = null) {
+            this.editingTask = task
+            this.isModalOpen = true
+        },
+
+        // Fecha o modal
+        closeModal() {
+            this.editingTask = null
+            this.isModalOpen = false
         },
 
         // Verifica se é possível adicionar mais um nível de dependência

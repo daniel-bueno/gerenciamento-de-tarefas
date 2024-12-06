@@ -1,9 +1,9 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="space-y-4 p-4 bg-zinc-700 rounded-lg shadow">
+  <form @submit.prevent="handleSubmit" class="space-y-4 p-4 rounded-lg shadow">
     <BaseInput
         id="task-name"
         v-model="formData.name"
-        label="Nome da Tarefa"
+        label="Nome"
         placeholder="Digite o nome da tarefa"
         required
         :error="errors.name"

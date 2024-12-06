@@ -1,9 +1,9 @@
 <template>
   <div
-      class="p-4 bg-dark rounded-lg shadow border-2 border-sky-300"
+      class="p-4 min-h-48 bg-zinc-700 rounded-lg shadow border-2 border-sky-300"
       :class="!selectedTask ? 'border-dashed flex items-center justify-center': 'border-solid'"
   >
-    <div v-if="selectedTask" class="task-tree">
+    <div class="task-tree">
       <!-- Nó Principal -->
       <div class="task-node">
         <div
@@ -69,9 +69,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div v-else class="text-center text-gray-500">
-      Selecione uma tarefa para visualizar suas dependências
     </div>
   </div>
 </template>

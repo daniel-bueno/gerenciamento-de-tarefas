@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap gap-4 rounded-lg">
+  <div class="p-6 flex flex-wrap justify-between gap-4 rounded-lg">
     <BaseSelect
         id="status-filter"
         v-model="selectedStatus"
