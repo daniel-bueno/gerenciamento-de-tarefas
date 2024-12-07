@@ -18,7 +18,12 @@
     <div v-if="parentTask" class="mt-2">
       <hr class="border-gray-400">
       <span class="text-xs text-gray-400">Tarefa Principal:</span>
-      <span class="text-xs font-medium text-gray-500 ml-1">{{ parentTask.name }}</span>
+      <span
+          class="text-xs font-medium text-gray-500 ml-1"
+          data-test="parent-task"
+      >
+        {{ parentTask.name }}
+      </span>
     </div>
 
     <div class="mt-4 flex justify-end gap-2">
