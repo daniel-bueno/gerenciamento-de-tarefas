@@ -21,7 +21,6 @@ export const useTaskStore = defineStore('tasks', {
         },
 
         // Obtém tarefas que podem ser parentes da tarefa especificada
-        // Usada quando era permitido editar a tarefa pai de uma tarefa
         getAvailableParentTasks: (state) => (taskId) => {
             return state.tasks.filter(task => {
                 // Não pode ser a própria tarefa
@@ -79,6 +78,9 @@ export const useTaskStore = defineStore('tasks', {
             const hasDependencies = this.tasks.some(task => task.parentId === taskId)
             if (hasDependencies) {
                 throw new Error('Não é possível excluir uma tarefa que possui dependências')
+            }
+            if (this.selectedTaskId === taskId) {
+                this.selectedTaskId = null
             }
             this.tasks = this.tasks.filter(task => task.id !== taskId)
         },
