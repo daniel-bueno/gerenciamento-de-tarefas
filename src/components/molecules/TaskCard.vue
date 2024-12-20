@@ -30,14 +30,14 @@
       <BaseButton
           variant="default"
           size="sm"
-          @click.prevent.stop="handleEdit"
+          @click="handleEdit"
       >
         Editar
       </BaseButton>
       <BaseButton
           variant="danger"
           size="sm"
-          @click.prevent.stop="handleDelete"
+          @click="handleDelete"
       >
         Excluir
       </BaseButton>

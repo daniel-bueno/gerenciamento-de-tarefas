@@ -10,7 +10,6 @@
       'px-4 py-2 text-md'
     ]"
       :disabled="disabled"
-      @click="handleClick"
   >
     <slot></slot>
   </button>
@@ -35,16 +34,5 @@ export default {
       validator: value => ['sm', 'md', 'lg'].includes(value)
     }
   },
-  setup(props, { emit }) {
-
-    const handleClick = (event) => {
-      event.stopPropagation()
-      emit('click', event)
-    }
-
-    return {
-      handleClick
-    }
-  }
 }
 </script>
